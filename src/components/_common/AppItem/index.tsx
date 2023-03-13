@@ -1,4 +1,3 @@
-import { useRouter } from "next/router";
 import Link from "next/link";
 import { IUser } from "@/types/user";
 import { Grid, Box, Typography, Card, CardMedia } from "@mui/material";
@@ -8,7 +7,6 @@ interface IAppItemProps {
 }
 
 export default function AppItem({ data }: IAppItemProps) {
-  const router = useRouter();
   const { id, email, first_name, last_name, avatar } = data;
 
   return (
@@ -37,15 +35,15 @@ export default function AppItem({ data }: IAppItemProps) {
         <Grid>
           #{id}
           <br />
-          <Typography>
+          <Typography data-testId={`user-first_name`}>
             <strong>First Name </strong>
             {first_name}
           </Typography>
-          <Typography>
+          <Typography data-testId={`user-last_name`}>
             <strong>Last Name </strong>
             {last_name}
           </Typography>
-          <Typography>
+          <Typography data-testId={`user-email`}>
             <strong>Email </strong>
             {email}
           </Typography>
