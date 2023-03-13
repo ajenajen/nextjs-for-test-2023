@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { NextPage } from "next";
+import _ from "lodash";
 import { IUser, IDropdown } from "@/types/user";
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
@@ -18,12 +19,17 @@ interface IHomePage {
   total: number;
 }
 
+const initFilter = {
+  name: "FIRST NAME",
+  value: "first_name",
+};
+
 const HomePage: NextPage<IHomePage> = ({ data, total }) => {
   const [firstmount, setFirstmount] = useState(true);
   const [loading, setLoading] = useState(false);
   const [display, setDisplay] = useState<IUser[]>(data);
   const [filterOptions, setFilterOptions] = useState<IDropdown[]>([]);
-  const [filter, setFilter] = useState<IDropdown>({ name: "ID", value: "ID" });
+  const [filter, setFilter] = useState<IDropdown>(initFilter);
   const [currentPage, setCurrentPage] = useState(1);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
@@ -34,13 +40,12 @@ const HomePage: NextPage<IHomePage> = ({ data, total }) => {
   }, []);
 
   const handleChangeSort = useCallback((e: SelectChangeEvent) => {
-    console.log(e.target.value);
+    setFilter({ name: e.target.name, value: e.target.value });
   }, []);
 
   useEffect(() => {
     const options = UserService.getFilterOptions(data?.[0]);
     setFilterOptions(options);
-    setFilter(options[0]);
 
     setFirstmount(false);
   }, []);
@@ -70,7 +75,7 @@ const HomePage: NextPage<IHomePage> = ({ data, total }) => {
           {loading && <Loading height={isMobile ? 500 : 900} />}
           {!loading &&
             Boolean(display.length) &&
-            display?.map((item: IUser) => (
+            _.orderBy(display, filter.value, "asc")?.map((item: IUser) => (
               <Grid item key={item?.id} xs={12} sm={6} md={3}>
                 <AppItem data={item} />
               </Grid>
